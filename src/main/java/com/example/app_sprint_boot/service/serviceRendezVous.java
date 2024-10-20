@@ -15,27 +15,32 @@ import jakarta.transaction.Transactional;
 public class serviceRendezVous {
     private final rendezVousResposity rendezVousRes;
 
-@Autowired
-
-public serviceRendezVous(rendezVousResposity rendezVousRes) {
+    @Autowired
+    public serviceRendezVous(rendezVousResposity rendezVousRes) {
         this.rendezVousRes = rendezVousRes;
     }
-    public RendezVous ajouterRV(RendezVous rv){
+
+    public RendezVous ajouterRV(RendezVous rv) {
         return rendezVousRes.save(rv);  // Sauvegarde le rendez-vous
     }
-    
 
+    public List<RendezVous> trouverRV() {
+        return rendezVousRes.findAll();
+    }
 
-public List<RendezVous> trouverRV(){
-    return rendezVousRes.findAll();
-}
-public void SupprimerRvById(Long id){
-    rendezVousRes.deleteById(id);  // Correctement supprimer un rendez-vous par son ID
-}
-public RendezVous trouverRVById(Long id){
-    return rendezVousRes.findById(id).orElseThrow(()->new RendezVousException ("rendez-vous avec id"+id+"n'existe pas"));
+    public void SupprimerRvById(Long id) {
+        rendezVousRes.deleteById(id);  // Correctement supprimer un rendez-vous par son ID
+    }
 
-}
+    public RendezVous trouverRVById(Long id) {
+        return rendezVousRes.findById(id).orElseThrow(() -> new RendezVousException("rendez-vous avec id " + id + " n'existe pas"));
+    }
 
-
+    public RendezVous modifierRV(RendezVous rv) {
+        if (rendezVousRes.existsById(rv.getId())) {
+            return rendezVousRes.save(rv);  // Correctement modifier un rendez-vous
+        } else {
+            throw new RendezVousException("rendez-vous avec id " + rv.getId() + " n'existe pas");
+        }
+    }
 }
